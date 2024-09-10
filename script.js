@@ -1,23 +1,54 @@
-// Select DOM elements
 const inputBox = document.getElementById("input-box");
+const priorityBox = document.getElementById("priority-box");
+const dateBox = document.getElementById("date-box");
 const listContainer = document.getElementById("list-container");
 const progressBar = document.getElementById("progress-bar");
 const progressText = document.getElementById("progress");
+const darkModeToggle = document.getElementById("dark-mode-toggle");
+const timerDisplay = document.getElementById("timer-display");
+let timerInterval;
+let timerSeconds = 25 * 60; // 25 minutes in seconds
 
-// Add Task
 function addTask() {
     if (inputBox.value === '') {
-        alert("You must write something!");
+        alert("You must Write Something");
     } else {
         let li = document.createElement("li");
-        li.innerHTML = inputBox.value;
+        li.innerHTML = inputBox.value + ' (Due: ' + dateBox.value + ')';
+        li.setAttribute('data-priority', priorityBox.value);
         listContainer.appendChild(li);
-        inputBox.value = "";
-        updateProgress();
+
+        let span = document.createElement("span");
+        span.innerHTML = "\u00d7";
+        li.appendChild(span);
     }
+
+    inputBox.value = "";
+    priorityBox.value = "low";
+    dateBox.value = "";
+    saveData();
+    updateProgress();
 }
 
-// Update Progress
+listContainer.addEventListener("click", function(e) {
+    if (e.target.tagName === "LI") {
+        e.target.classList.toggle("checked");
+        updateProgress();
+    } else if (e.target.tagName === "SPAN") {
+        e.target.parentElement.remove();
+        updateProgress();
+    }
+}, false);
+
+function saveData() {
+    localStorage.setItem("data", listContainer.innerHTML);
+}
+
+function showTask() {
+    listContainer.innerHTML = localStorage.getItem("data");
+    updateProgress();
+}
+
 function updateProgress() {
     let totalTasks = listContainer.getElementsByTagName('li').length;
     let completedTasks = listContainer.getElementsByClassName('checked').length;
@@ -26,32 +57,50 @@ function updateProgress() {
     progressText.innerText = Math.round(progress) + "%";
 }
 
-// Toggle Dark Mode
 function toggleDarkMode() {
     document.body.classList.toggle('dark-mode');
+    if (document.body.classList.contains('dark-mode')) {
+        localStorage.setItem('darkMode', 'enabled');
+    } else {
+        localStorage.setItem('darkMode', 'disabled');
+    }
 }
 
-// Timer Functionality
-let timer;
-let isTimerRunning = false;
+function loadDarkMode() {
+    if (localStorage.getItem('darkMode') === 'enabled') {
+        document.body.classList.add('dark-mode');
+        darkModeToggle.checked = true;
+    }
+}
 
 function startTimer() {
-    if (isTimerRunning) return;
-
-    let time = 25 * 60;
-    const timerDisplay = document.getElementById("timer-display");
-
-    timer = setInterval(() => {
-        let minutes = Math.floor(time / 60);
-        let seconds = time % 60;
-        seconds = seconds < 10 ? '0' + seconds : seconds;
-        timerDisplay.innerText = `${minutes}:${seconds}`;
-        time--;
-
-        if (time < 0) {
-            clearInterval(timer);
-            alert("Time's up! Take a short break.");
+    if (timerInterval) return; // Prevent multiple intervals
+    timerInterval = setInterval(() => {
+        if (timerSeconds <= 0) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            alert("Time's up!");
+            return;
         }
+        timerSeconds--;
+        updateTimerDisplay();
     }, 1000);
-    isTimerRunning = true;
 }
+
+function stopTimer() {
+    clearInterval(timerInterval);
+    timerInterval = null;
+}
+
+function updateTimerDisplay() {
+    let minutes = Math.floor(timerSeconds / 60);
+    let seconds = timerSeconds % 60;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    seconds = seconds < 10 ? '0' + seconds : seconds;
+    timerDisplay.innerText = `${minutes}:${seconds}`;
+}
+
+loadDarkMode();
+showTask();
+updateTimerDisplay();
+
