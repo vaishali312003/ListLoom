@@ -93,6 +93,11 @@ function updateTimer() {
     if (timerSeconds <= 0) {
         clearInterval(timer);
         timerDisplay.textContent = "00:00";
+        
+        // Play completion sound
+        const completionSound = document.getElementById("completion-sound");
+        completionSound.play();
+
         alert("Focus time is up! Add completed tasks to your list.");
         addCompletedTasks();
         return;
@@ -106,6 +111,7 @@ function updateTimer() {
     
     timerSeconds--;
 }
+
 
 function stopTimer() {
     clearInterval(timer);
