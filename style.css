@@ -11,42 +11,46 @@
     background:linear-gradient(135deg,#153677,#628362);
     padding: 10px;
 }
+
 .todo-app{
     width:100%;
-    max-width:540px;
+    max-width:640px;
     background: #fff;
     margin: 100px auto 20px;
     padding:40px 30px 70px;
     border-radius: 10px;
 }
+
 .todo-app h2{
     color:#002765;
     display: flex;
     align-items: center;
     margin-bottom: 20px;
 }
+
 .todo-app img{
     width:30px;
     margin-left: 10px;
-
 }
+
 .row{
     display: flex;
     align-items: center;
     justify-content: space-between;
-     background: #edeef0;
-     border-radius: 30px;
-     padding-left: 20px;
-     margin-bottom: 20px;
+    background: #edeef0;
+    border-radius: 30px;
+    padding-left: 20px;
+    margin-bottom: 20px;
 }
-input{
+
+input, select{
     flex:1;
     border: none;
     outline: none;
     background: transparent;
     padding: 10px;
-
 }
+
 button{
     border: none;
     outline: none;
@@ -57,35 +61,30 @@ button{
     cursor: pointer;
     border-radius: 40px;
 }
+
 ul li{
-list-style: none;
-font-size: 17px;
-padding: 12px 8px 12px 50px;
-user-select: none;
-cursor: pointer;
-position: relative;
+    list-style: none;
+    font-size: 17px;
+    padding: 12px 8px 12px 50px;
+    user-select: none;
+    cursor: pointer;
+    position: relative;
+    border-left: 5px solid green; /* Priority Color */
 }
 
-ul li::before{
-    content: '';
-    position: absolute;
-    height: 28px;
-    width: 28px;
-    border-radius: 50%;
-    background-image: url(images/unchecked.png);
-    background-size: cover;
-    background-position: center;
-    top:12px;
-    left:8px;
+ul li[data-priority="high"] {
+    border-left-color: red;
 }
+
+ul li[data-priority="medium"] {
+    border-left-color: orange;
+}
+
 ul li.checked{
     color:#555;
     text-decoration: line-through;
+}
 
-}
-ul li.checked::before{
-    background-image: url(images/checked.png);
-}
 ul li span{
     position:absolute;
     right:0;
@@ -97,9 +96,30 @@ ul li span{
     line-height: 40px;
     text-align:center; 
     border-radius: 50%;   
-/* to add cross*/ 
 }
+
 ul li span:hover{
     background: #edeef0;
+}
 
+/* Progress Bar */
+#progress-container {
+    margin-top: 20px;
+}
+
+#progress-bar {
+    width: 100%;
+    height: 20px;
+    background-color: #f3f3f3;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#progress-bar::after {
+    content: '';
+    display: block;
+    height: 100%;
+    width: 0;
+    background-color: #628362;
+    transition: width 0.3s;
 }
