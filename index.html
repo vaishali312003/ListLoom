@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Dark Mode Toggle -->
     <div class="theme-toggle">
         <label class="switch">
             <input type="checkbox" id="dark-mode-toggle" onclick="toggleDarkMode()">
@@ -14,26 +15,38 @@
         </label>
         <p>Dark Mode</p>
     </div>
+
+    <!-- To-do List Container -->
     <div class="container">
         <div class="todo-app">
-        <h2>LISTLOOM <img src="images/icon.png"></h2>
-        <div class="row">
-            <input type="text" id="input-box" placeholder="Add your task">
-            <select id="priority-box">
-                <option value="high">High Priority</option>
-                <option value="medium">Medium Priority</option>
-                <option value="low">Low Priority</option>
-            </select>
-            <input type="date" id="date-box" placeholder="Set a deadline">
-            <button onclick="addTask()">Add</button>
-        </div>
-        <ul id="list-container"></ul>
-        <div id="progress-container">
-            <p>Task Completion: <span id="progress">0%</span></p>
-            <div id="progress-bar"></div>
+            <h2>LISTLOOM</h2>
+            <div class="row">
+                <input type="text" id="input-box" placeholder="Add your task">
+                <select id="priority-box">
+                    <option value="high">High Priority</option>
+                    <option value="medium">Medium Priority</option>
+                    <option value="low">Low Priority</option>
+                </select>
+                <input type="date" id="date-box" placeholder="Set a deadline">
+                <button onclick="addTask()">Add</button>
+            </div>
+            <ul id="list-container"></ul>
+
+            <!-- Task Completion Progress -->
+            <div id="progress-container">
+                <p>Task Completion: <span id="progress">0%</span></p>
+                <div id="progress-bar"></div>
+            </div>
+
+            <!-- Focus Timer -->
+            <div id="timer">
+                <h3>Focus Timer</h3>
+                <p id="timer-display">25:00</p>
+                <button onclick="startTimer()">Start Timer</button>
+            </div>
         </div>
     </div>
-    </div>
+    
     <script src="script.js"></script>
 </body>
 </html>
