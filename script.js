@@ -6,7 +6,8 @@ const progressBar = document.getElementById("progress-bar");
 const progressText = document.getElementById("progress");
 const darkModeToggle = document.getElementById("dark-mode-toggle");
 const timerDisplay = document.getElementById("timer-display");
-let timerInterval;
+
+let timer;
 let timerSeconds = 25 * 60; // 25 minutes in seconds
 
 function addTask() {
@@ -74,33 +75,49 @@ function loadDarkMode() {
 }
 
 function startTimer() {
-    if (timerInterval) return; // Prevent multiple intervals
-    timerInterval = setInterval(() => {
-        if (timerSeconds <= 0) {
-            clearInterval(timerInterval);
-            timerInterval = null;
-            alert("Time's up!");
-            return;
-        }
-        timerSeconds--;
-        updateTimerDisplay();
-    }, 1000);
+    timer = setInterval(updateTimer, 1000);
+}
+
+function updateTimer() {
+    if (timerSeconds <= 0) {
+        clearInterval(timer);
+        timerDisplay.textContent = "00:00";
+        alert("Focus time is up! Add completed tasks to your list.");
+        addCompletedTasks();
+        return;
+    }
+    
+    let minutes = Math.floor(timerSeconds / 60);
+    let seconds = timerSeconds % 60;
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    seconds = seconds < 10 ? "0" + seconds : seconds;
+    timerDisplay.textContent = minutes + ":" + seconds;
+    
+    timerSeconds--;
 }
 
 function stopTimer() {
-    clearInterval(timerInterval);
-    timerInterval = null;
+    clearInterval(timer);
+    timerSeconds = 25 * 60; // Reset to 25 minutes
+    timerDisplay.textContent = "25:00";
 }
 
-function updateTimerDisplay() {
-    let minutes = Math.floor(timerSeconds / 60);
-    let seconds = timerSeconds % 60;
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-    seconds = seconds < 10 ? '0' + seconds : seconds;
-    timerDisplay.innerText = `${minutes}:${seconds}`;
+function addCompletedTasks() {
+    const checkedItems = listContainer.querySelectorAll('li.checked');
+    checkedItems.forEach(item => {
+        let completedList = document.getElementById("completed-tasks");
+        if (!completedList) {
+            completedList = document.createElement("div");
+            completedList.id = "completed-tasks";
+            completedList.innerHTML = "<h3>Completed Tasks Today</h3><ul id='completed-list'></ul>";
+            document.querySelector(".todo-app").appendChild(completedList);
+        }
+        const completedListContainer = completedList.querySelector("#completed-list");
+        completedListContainer.appendChild(item.cloneNode(true));
+        item.remove(); // Remove from original list
+    });
+    updateProgress();
 }
 
 loadDarkMode();
 showTask();
-updateTimerDisplay();
-
