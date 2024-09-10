@@ -6,9 +6,10 @@ const progressBar = document.getElementById("progress-bar");
 const progressText = document.getElementById("progress");
 const darkModeToggle = document.getElementById("dark-mode-toggle");
 const timerDisplay = document.getElementById("timer-display");
+const timeInput = document.getElementById("time-input"); // Time input field
 
 let timer;
-let timerSeconds = 25 * 60; // 25 minutes in seconds
+let timerSeconds = 25 * 60; // Default 25 minutes in seconds
 
 function addTask() {
     if (inputBox.value === '') {
@@ -75,6 +76,16 @@ function loadDarkMode() {
 }
 
 function startTimer() {
+    // Get user-defined time from input field
+    let minutesInput = parseInt(document.getElementById("minutes-input").value) || 0;
+    let secondsInput = parseInt(document.getElementById("seconds-input").value) || 0;
+    timerSeconds = (minutesInput * 60) + secondsInput;
+    
+    if (timerSeconds <= 0) {
+        alert("Please set a valid time.");
+        return;
+    }
+
     timer = setInterval(updateTimer, 1000);
 }
 
@@ -98,8 +109,8 @@ function updateTimer() {
 
 function stopTimer() {
     clearInterval(timer);
-    timerSeconds = 25 * 60; // Reset to 25 minutes
-    timerDisplay.textContent = "25:00";
+    timerSeconds = 0; // Reset to 0
+    timerDisplay.textContent = "00:00";
 }
 
 function addCompletedTasks() {

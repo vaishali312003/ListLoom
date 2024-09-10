@@ -24,6 +24,7 @@
                 <input type="text" id="input-box" placeholder="Add your task">
                 <select id="priority-box">
                     <option value="high">High Priority</option>
+                    <option value="medium
                     <option value="medium">Medium Priority</option>
                     <option value="low">Low Priority</option>
                 </select>
@@ -41,7 +42,9 @@
             <!-- Focus Timer -->
             <div id="timer">
                 <h3>Focus Timer</h3>
-                <p id="timer-display">25:00</p>
+                <p id="timer-display">00:00</p>
+                <input type="number" id="minutes-input" placeholder="Minutes" min="0">
+                <input type="number" id="seconds-input" placeholder="Seconds" min="0" max="59">
                 <button onclick="startTimer()">Start Timer</button>
                 <button onclick="stopTimer()">Stop Timer</button>
             </div>
@@ -54,3 +57,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+
