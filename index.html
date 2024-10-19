@@ -20,34 +20,35 @@
         #mario-gif {
             width: 150px; /* Adjustable size */
             height: auto; /* Maintain aspect ratio */
-            position: fixed; /* Position it on the left side */
-            top: 50%; /* Center vertically */
-            left: 10px; /* Position from the left */
-            transform: translateY(-50%); /* Adjust for centering */
-            z-index: 1; /* Ensure it’s above other elements if needed */
+            margin-top: 20px; /* Space above the GIF */
+            display: none; /* Initially hidden */
         }
 
         /* Ensure there's space for the GIF */
         .container {
-            padding-left: 170px; /* Give space for the GIF */
+            padding-left: 20px; /* Adjust padding as needed */
+        }
+
+        /* Position the timer section */
+        #timer {
+            position: relative; /* Set position relative for internal positioning */
+            text-align: center; /* Center the timer text */
         }
     </style>
 </head>
 <body>
     <!-- Dark Mode Toggle -->
-    <div class="theme-toggle">
-        <label class="switch">
-            <input type="checkbox" id="dark-mode-toggle" onclick="toggleDarkMode()">
-            <span class="slider round"></span>
-        </label>
-        <p>Dark Mode</p>
-    </div>
+    <!-- Dark Mode Toggle -->
+<div class="theme-toggle">
+    <label class="switch">
+        <input type="checkbox" id="dark-mode-toggle" onclick="toggleDarkMode()">
+        <span class="slider round"></span>
+    </label>
+    <p>Dark Mode</p>
+</div>
 
     <!-- To-do List Container -->
     <div class="container">
-        <!-- Add the Mario GIF here -->
-        <img src="mario.gif" alt="Mario GIF" id="mario-gif" />
-        
         <div class="todo-app">
             <h2>LISTLOOM</h2>
             <div class="row">
@@ -69,6 +70,9 @@
                 <div id="progress-bar"></div>
             </div>
 
+            <!-- Redo Last Removed Task Button -->
+           
+
             <!-- Focus Timer -->
             <div id="timer">
                 <h3>Focus Timer</h3>
@@ -78,6 +82,9 @@
                 <button onclick="startTimer()">Start Timer</button>
                 <button onclick="stopTimer()">Stop Timer</button>
             </div>
+
+            <!-- Mario GIF Positioned Below Timer -->
+            <img src="mario.gif" alt="Mario GIF" id="mario-gif" />
 
             <!-- Completed Tasks Today -->
             <div id="completed-tasks"></div>

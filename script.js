@@ -1,177 +1,195 @@
-const inputBox = document.getElementById("input-box");
-const priorityBox = document.getElementById("priority-box");
-const dateBox = document.getElementById("date-box");
-const listContainer = document.getElementById("list-container");
-const progressBar = document.getElementById("progress-bar");
-const progressText = document.getElementById("progress");
-const darkModeToggle = document.getElementById("dark-mode-toggle");
-const timerDisplay = document.getElementById("timer-display");
+// JavaScript code for task management and timer
 
-// Map priority levels to numbers for sorting
-const priorityValues = {
-    high: 1,
-    medium: 2,
-    low: 3
-};
+let tasks = [];
+let removedTasks = []; // Array to store removed tasks
+let timer; // For the timer
+let timerRunning = false;
 
-let timer;  // Timer instance for the focus timer
-let timerSeconds = 0;  // Initial timer value
-
-// Add a new task to the list
+// Function to add a task
 function addTask() {
-    if (inputBox.value === '') {
-        alert("You must write something!");
+    const inputBox = document.getElementById("input-box");
+    const priorityBox = document.getElementById("priority-box");
+    const dateBox = document.getElementById("date-box");
+    
+    if (inputBox.value === "") {
+        alert("Please add a task.");
         return;
     }
 
-    // Create a new list item with priority and due date
-    let li = document.createElement("li");
-    li.innerHTML = `${inputBox.value} (Due: ${dateBox.value || 'No deadline'})`;
-    li.setAttribute('data-priority', priorityBox.value);  // Store priority
-
-    // Create a close (X) button for each task
-    let span = document.createElement("span");
-    span.innerHTML = "\u00d7";  // Unicode for '×'
-    li.appendChild(span);
-
-    // Add the new task to the list container
-    listContainer.appendChild(li);
-
-    // Reset input fields
-    inputBox.value = "";
-    priorityBox.value = "low";
-    dateBox.value = "";
-
-    // Save, sort, and update the progress bar
-    saveData();
-    sortTasksByPriority();
-    updateProgress();
+    const task = {
+        name: inputBox.value,
+        priority: priorityBox.value,
+        date: dateBox.value,
+        completed: false
+    };
+    
+    tasks.push(task);
+    inputBox.value = ""; // Clear the input box
+    updateTaskList(); // Update the displayed task list
+    updateProgress(); // Update task completion progress
 }
 
-// Sort tasks based on priority (high < medium < low)
+// Function to remove a task
+function removeTask(index) {
+    const removedTask = tasks.splice(index, 1)[0]; // Remove task and get it
+    removedTasks.push(removedTask); // Add to removed tasks
+    updateTaskList(); // Update the displayed task list
+    updateProgress(); // Update task completion progress
+}
+
+// Function to redo a task
+function redoTask() {
+    if (removedTasks.length === 0) {
+        alert("No tasks to redo.");
+        return;
+    }
+    const task = removedTasks.pop(); // Get the last removed task
+    tasks.push(task); // Add it back to the tasks
+    updateTaskList(); // Update the displayed task list
+    updateProgress(); // Update task completion progress
+}
+
+// Function to mark a task as completed
+function completeTask(index) {
+    tasks[index].completed = true; // Mark the task as completed
+    updateTaskList(); // Update the list display
+    updateProgress(); // Update task completion progress
+}
+
+// Function to sort tasks by priority
 function sortTasksByPriority() {
-    let tasks = Array.from(listContainer.getElementsByTagName('li'));
+    const priorityOrder = {
+        high: 1,
+        medium: 2,
+        low: 3
+    };
 
-    // Sort tasks by priority using the data attribute
     tasks.sort((a, b) => {
-        let priorityA = priorityValues[a.getAttribute('data-priority')];
-        let priorityB = priorityValues[b.getAttribute('data-priority')];
-        return priorityA - priorityB;  // Ascending order
+        // Sort first by completed status
+        if (a.completed && !b.completed) return 1; // Keep completed tasks at the end
+        if (!a.completed && b.completed) return -1;
+        
+        // Then sort by priority
+        return priorityOrder[a.priority] - priorityOrder[b.priority];
     });
-
-    // Clear the list and re-add the sorted tasks
-    listContainer.innerHTML = "";
-    tasks.forEach(task => listContainer.appendChild(task));
 }
 
-// Save tasks to local storage
-function saveData() {
-    localStorage.setItem("data", listContainer.innerHTML);
+// Function to update the task list display
+function updateTaskList() {
+    sortTasksByPriority(); // Sort tasks by priority before updating the list
+    const listContainer = document.getElementById("list-container");
+    listContainer.innerHTML = ""; // Clear the list before updating
+    
+    tasks.forEach((task, index) => {
+        const li = document.createElement("li");
+        
+        // Create the task text element
+        const taskText = document.createElement("span");
+        taskText.textContent = `${task.name} (Due: ${task.date})`;
+        
+        // Add completed class if the task is completed
+        if (task.completed) {
+            taskText.classList.add("completed"); // Add the completed class
+        }
+
+        // Create the complete button
+        const completeBtn = document.createElement("button");
+        completeBtn.textContent = "Complete";
+        completeBtn.onclick = () => completeTask(index); // Mark the task as completed
+        
+        // Create the remove and redo buttons only for completed tasks
+        const removeBtn = document.createElement("button");
+        removeBtn.textContent = "Remove";
+        removeBtn.onclick = () => removeTask(index); // Remove the task
+
+        const redoBtn = document.createElement("button");
+        redoBtn.textContent = "Redo";
+        redoBtn.onclick = () => redoTask(); // Redo the last removed task
+
+        // Append buttons based on the task completion status
+        if (task.completed) {
+            li.appendChild(removeBtn); // Add the remove button
+            li.appendChild(redoBtn); // Add the redo button
+        } else {
+            li.appendChild(taskText); // Append task text only for incomplete tasks
+            li.appendChild(completeBtn); // Add the complete button
+        }
+
+        listContainer.appendChild(li);
+    });
 }
 
-// Load tasks from local storage
-function showTask() {
-    listContainer.innerHTML = localStorage.getItem("data") || "";
-    sortTasksByPriority();  // Ensure tasks are sorted on load
-    updateProgress();
-}
-
-// Update the progress bar and display the completion percentage
+// Function to update progress
 function updateProgress() {
-    let totalTasks = listContainer.getElementsByTagName('li').length;
-    let completedTasks = listContainer.getElementsByClassName('checked').length;
-    let progress = totalTasks ? (completedTasks / totalTasks) * 100 : 0;
+    const completedTasks = tasks.filter(task => task.completed).length;
+    const totalTasks = tasks.length;
+    const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+    document.getElementById("progress").innerText = `${progress.toFixed(0)}%`;
 
-    progressBar.style.width = progress + "%";
-    progressText.innerText = Math.round(progress) + "%";
-}
-
-// Toggle dark mode and save the user's preference in local storage
-function toggleDarkMode() {
-    document.body.classList.toggle('dark-mode');
-    localStorage.setItem('darkMode', document.body.classList.contains('dark-mode') ? 'enabled' : 'disabled');
-}
-
-// Load dark mode preference from local storage
-function loadDarkMode() {
-    if (localStorage.getItem('darkMode') === 'enabled') {
-        document.body.classList.add('dark-mode');
-        darkModeToggle.checked = true;
+    // Show Mario GIF if all tasks are completed
+    const marioGif = document.getElementById("mario-gif");
+    if (progress === 100) {
+        marioGif.style.display = "block"; // Show the GIF
+    } else {
+        marioGif.style.display = "none"; // Hide the GIF
     }
 }
 
-// Handle task click events (check/uncheck or delete)
-listContainer.addEventListener("click", function (e) {
-    if (e.target.tagName === "LI") {
-        e.target.classList.toggle("checked");
-        updateProgress();
-    } else if (e.target.tagName === "SPAN") {
-        e.target.parentElement.remove();
-        updateProgress();
-    }
-}, false);
+// Timer functions (startTimer, stopTimer, playCompletionSound)...
+// Include the timer code as it was in your existing script.js
 
-// Start the focus timer with user-defined input
+// Sound element
+const completionSound = document.getElementById("completion-sound");
+
+// Function to play the sound
+function playCompletionSound() {
+    completionSound.currentTime = 0;  // Rewind to the start
+    completionSound.play();  // Play sound
+}
+
+// Function to start the timer
 function startTimer() {
-    let minutes = parseInt(document.getElementById("minutes-input").value) || 0;
-    let seconds = parseInt(document.getElementById("seconds-input").value) || 0;
-    timerSeconds = (minutes * 60) + seconds;
+    if (timerRunning) return; // Prevent starting a new timer while one is running
+    const minutes = parseInt(document.getElementById("minutes-input").value) || 0;
+    const seconds = parseInt(document.getElementById("seconds-input").value) || 0;
 
-    if (timerSeconds <= 0) {
-        alert("Please set a valid time.");
+    if (minutes < 0 || seconds < 0 || seconds >= 60) {
+        alert("Please enter valid time.");
         return;
     }
 
-    clearInterval(timer);  // Clear any previous timer
-    timer = setInterval(updateTimer, 1000);  // Start a new timer
+    let totalTime = minutes * 60 + seconds;
+
+    timer = setInterval(() => {
+        if (totalTime <= 0) {
+            clearInterval(timer);
+            timerRunning = false;
+            document.getElementById("timer-display").innerText = "00:00";
+            playCompletionSound();  // Play sound on completion
+            alert("Timer completed!");  // Pop-up notification
+            return;
+        }
+        totalTime--;
+        const mins = String(Math.floor(totalTime / 60)).padStart(2, '0');
+        const secs = String(totalTime % 60).padStart(2, '0');
+        document.getElementById("timer-display").innerText = `${mins}:${secs}`;
+        timerRunning = true;
+    }, 1000);
 }
 
-// Update the timer display every second
-function updateTimer() {
-    if (timerSeconds <= 0) {
-        clearInterval(timer);
-        timerDisplay.textContent = "00:00";
-
-        // Play completion sound
-        document.getElementById("completion-sound").play();
-        alert("Focus time is up! Add completed tasks to your list.");
-        addCompletedTasks();
-        return;
-    }
-
-    let minutes = Math.floor(timerSeconds / 60);
-    let seconds = timerSeconds % 60;
-    timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    timerSeconds--;
-}
-
-// Stop the timer and reset the display
+// Function to stop the timer
 function stopTimer() {
     clearInterval(timer);
-    timerDisplay.textContent = "00:00";
+    timerRunning = false;
+    document.getElementById("timer-display").innerText = "00:00";
 }
-
-// Move checked tasks to the completed tasks section
-function addCompletedTasks() {
-    const checkedItems = listContainer.querySelectorAll('li.checked');
-    let completedList = document.getElementById("completed-tasks");
-
-    if (!completedList) {
-        completedList = document.createElement("div");
-        completedList.id = "completed-tasks";
-        completedList.innerHTML = "<h3>Completed Tasks Today</h3><ul id='completed-list'></ul>";
-        document.querySelector(".todo-app").appendChild(completedList);
-    }
-
-    const completedListContainer = completedList.querySelector("#completed-list");
-    checkedItems.forEach(item => {
-        completedListContainer.appendChild(item.cloneNode(true));
-        item.remove();  // Remove from original list
-    });
-
-    updateProgress();
+// Function to toggle dark mode
+function toggleDarkMode() {
+    const body = document.body;
+    const container = document.querySelector('.container');
+    const h2 = document.querySelector('h2');
+    
+    body.classList.toggle('dark-mode'); // Toggle dark mode class on body
+    container.classList.toggle('dark-mode'); // Toggle dark mode class on container
+    h2.classList.toggle('dark-mode'); // Toggle dark mode class on heading
 }
-
-// Initialize the app: load tasks and dark mode preferences
-loadDarkMode();
-showTask();

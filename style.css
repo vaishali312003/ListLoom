@@ -15,6 +15,12 @@
     transform: translateY(-50%); /* Adjust for centering */
     z-index: 1; /* Ensure it’s above other elements if needed */
 }
+/* Add this CSS for completed tasks */
+.completed {
+    text-decoration: line-through; /* Cross out completed tasks */
+    color: grey; /* Change color for better visibility */
+}
+
 
 
 .container {
@@ -206,3 +212,41 @@ input:checked + .slider:before {
 .slider.round:before {
     border-radius: 50%;
 }
+/* Light mode styles */
+body {
+    background-color: white;
+    color: black;
+}
+
+.container {
+    background-color: #f9f9f9; /* Light background for container */
+}
+
+h2 {
+    color: #6a1b9a; /* Heading color */
+}
+
+/* Dark mode styles */
+body.dark-mode {
+    background-color: #040404f4; /* Dark background */
+    color: white; /* Text color for dark mode */
+}
+
+.container.dark-mode {
+    background-color: #060606; /* Darker background for container */
+}
+
+h2.dark-mode {
+    color: #bb86fc; /* Different color for the heading in dark mode */
+}
+
+button {
+    background-color: #333; /* Dark button background */
+    color: white; /* Button text color */
+}
+
+button:hover {
+    background-color: #555; /* Button hover color */
+}
+
+/* Add additional dark mode styles as needed */
