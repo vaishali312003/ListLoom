@@ -5,6 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LISTLOOM</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Add gradient background to the heading */
+        h2 {
+            background: linear-gradient(135deg, #6a1b9a, #8e24aa); /* Purple gradient */
+            -webkit-background-clip: text; /* For Safari */
+            -webkit-text-fill-color: transparent; /* For Safari */
+            font-size: 2.5em; /* Adjust font size as needed */
+            text-align: center; /* Center the heading */
+            margin: 20px 0; /* Add some margin for spacing */
+        }
+
+        /* Add CSS for the GIF */
+        #mario-gif {
+            width: 150px; /* Adjustable size */
+            height: auto; /* Maintain aspect ratio */
+            position: fixed; /* Position it on the left side */
+            top: 50%; /* Center vertically */
+            left: 10px; /* Position from the left */
+            transform: translateY(-50%); /* Adjust for centering */
+            z-index: 1; /* Ensure it’s above other elements if needed */
+        }
+
+        /* Ensure there's space for the GIF */
+        .container {
+            padding-left: 170px; /* Give space for the GIF */
+        }
+    </style>
 </head>
 <body>
     <!-- Dark Mode Toggle -->
@@ -18,6 +45,9 @@
 
     <!-- To-do List Container -->
     <div class="container">
+        <!-- Add the Mario GIF here -->
+        <img src="mario.gif" alt="Mario GIF" id="mario-gif" />
+        
         <div class="todo-app">
             <h2>LISTLOOM</h2>
             <div class="row">
@@ -58,4 +88,3 @@
     <script src="script.js"></script>
 </body>
 </html>
-

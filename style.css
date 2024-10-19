@@ -5,9 +5,21 @@
     font-family: 'Poppins', sans-serif;
     box-sizing: border-box;
 }
+/* Image Styling */
+#mario-gif {
+    width: 200px; /* Adjust width as needed */
+    height: 200px; /* Maintain aspect ratio */
+    position: absolute; /* Position it relative to its container */
+    top: 80%; /* Center vertically */
+    left: 20%; /* Position from the left */
+    transform: translateY(-50%); /* Adjust for centering */
+    z-index: 1; /* Ensure it’s above other elements if needed */
+}
+
 
 .container {
     width: 100%;
+    padding-left: 160px; /* Give some space for the image */
     min-height: 100vh;
     background: linear-gradient(135deg, #153677, #628362);
     padding: 10px;
@@ -45,7 +57,7 @@ input, select {
 
 button {
     padding: 16px 30px;
-    background: #ff5945;
+    background: linear-gradient(to right, #800080, #A020F0);
     color: #fff;
     border: none;
     cursor: pointer;
